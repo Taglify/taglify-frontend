@@ -2,16 +2,42 @@
   text-align: center;
   width: 100vw;
   height: 100vh;
-  display: flex;
   background-color: #0c0c0d;
+  display: flex;
+  flex-direction: column;
 }
 
-#App #sidebar_container {
-  width: 120px;
-  height: 100%;
+#App #navbar_container {
+  width: 100%;
+  height: 75px;
+  z-index: 10;
 }
 
 #App #page_container {
-  width: calc(100% - 120px);
+  width: 100%;
+  height: calc(100% - 75px);
+  display: flex;
+  flex-direction: row;
+  background-color: #0c0c0d;
+}
+
+#App #page_container #playlists_container {
+  width: 20%;
   height: 100%;
+  border-right: solid 1px #2a2a2e;
+}
+
+#App #page_container #songs_container {
+  height: 100%;
+  border-right: solid 1px #2a2a2e;
+}
+
+#App #page_container #songs_container.retracted {
+  width: 25%;
+  transition: width .3s;
+}
+
+#App #page_container #songs_container.expanded {
+  width: 80%;
+  transition: width .3s;
 }

@@ -4,11 +4,11 @@
  */
 
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import SpotifyWebAPI from 'spotify-web-api-js';
 
-import Sidebar from './Components/Sidebar/Sidebar.js';
+import Navbar        from './Components/Navbar/Navbar.js';
+import PlaylistPanel from './Components/ListPanel/ListPanel.js';
 
 
 // Global variables for Spotify API
@@ -22,6 +22,7 @@ let SpotifyAPI = new SpotifyWebAPI();
 
 class App extends React.Component {
 
+  // CONSTRUCTOR -------------------------------------------------------------//
   constructor () {
     super();
 
@@ -33,26 +34,34 @@ class App extends React.Component {
       logged_in : token? true : false,    // true if <App/> can use user's Spotify
       token     : token,                  // access token given by Spotify for using the API
 
+      playlists: [],                      // the users playlists
+      selectedPlaylistsSongs: [],         // the currently selected playlist's songs
+      
+      selectedPlaylistID: "",             // the current playlist id selected in PLAYLISTS <ListPanel/>
+      selectedSongID: "",                 // the current song id selected in SONGS <ListPanel/>
+
       currentPage: "untaggedSongs"        // indicates the page the user is currently on
+    }
+    
+    if (token) {
+      SpotifyAPI.setAccessToken(this.state.token);
+
+      // Get the users playlists and store in state
+      SpotifyAPI.getUserPlaylists().then(response => {
+        this.setState({playlists: response.items});
+      });
     }
 
     this.playerExistsInterval = null;
   }
 
-  componentDidMount() {
-    if (this.state.token) {
-      SpotifyAPI.setAccessToken(this.state.token);
+  componentDidMount () {
+    if (this.state.logged_in) {
       this.createPlayer();
     }
   }
 
-  // Spotify Web SDK Functions -------------------------------------------------
-  /**
-    * Functions that are necessary for using the Spotify Web SDK
-    *
-  */
-
-  getURLParameters() {
+  getURLParameters () {
     /**
      * Get the parameters from the url and return them as a hashmap object.
      *
@@ -108,11 +117,15 @@ class App extends React.Component {
       window.WebPlayer.connect();
 
       // Delete Interval
-      clearInterval(this.playerExistsInterval);
+      clearInterval (this.playerExistsInterval);
     }
   }
 
   createPlayer () {
+    /**
+     * Checks if the user is logged in and trys to create a SpotifyWebSDK player
+     * until it succeeds.
+     */
     if (this.state.logged_in === true) {
       this.playerExistsInterval = setInterval( () => this.playerExists(), 3000 );
     }
@@ -125,7 +138,7 @@ class App extends React.Component {
     window.open('http://localhost:8888', "_self");
   }
 
-  // onClick -------------------------------------------------------------------
+  // onClick ----------------------------------------------------------------//
 
 
   onClick_selectPage = (page) => {
@@ -133,33 +146,105 @@ class App extends React.Component {
      * function selects a page, used by <Sidebar/> for navigation.
      * page has to be in set [playlists, taggedSongs, untaggedSongs], otherwise function does nothing
      *
-     * @param   string    page        selects the given page name, assuming it is valid
+     * @param {string} page selects the given page name, assuming it is valid
      */
 
-     if (["playlists","taggedSongs","untaggedSongs"].indexOf(page) >= 0 && this.state.currentPage !== page) {
-       this.setState({currentPage: page});
-     }
+    if (["playlists","taggedSongs","untaggedSongs"].indexOf(page) >= 0 && this.state.currentPage !== page) {
+      this.setState({currentPage: page});
+    }
   }
 
-  // Render --------------------------------------------------------------------
+  setSelectedPlaylist = (playlist) => {
+    /**
+     * Selects a playlist contained within <Panel/> with type PLAYLISTS and updates
+     * the currently selected playlist in this.state.
+     * 
+     * @param {string} playlist the playlist to update.
+     */
+
+    this.setState({
+         selectedPlaylistID: playlist,
+         selectedSongID: '',
+    });
+
+    // Store the contents of the playlist to this.state
+    SpotifyAPI.getPlaylist(playlist).then(response => {
+      console.log(response);
+      this.setState({selectedPlaylistsSongs: response.tracks.items})
+    });
+
+  }
+
+  setSelectedSong = (song) => {
+    /**
+     * Selects a song contained within <Panel/> with type SONGS and updates
+     * the currently selected song in this.state.
+     * 
+     * @param {string} song the playlist to update.
+     */
+
+    this.setState({selectedSongID: song});
+
+  }
+
+  // Render -----------------------------------------------------------------//
   /**
    * Renders the <App/> Component
    */
 
-  render() {
-    return (
-      <div id="App">
-        <div id="sidebar_container">
-          <Sidebar
-            selectedOption={this.state.currentPage}
-            onClick_selectPage={this.onClick_selectPage}
-          />
+  render () {
+    console.log(this.state);
+
+    if (this.state.logged_in) {
+      return (
+        <div id="App">
+          <div id="navbar_container">
+            <Navbar/>
+          </div>
+          <div id="page_container">
+            
+            <div id="playlists_container">
+              <PlaylistPanel
+                contentType='PLAYLISTS'
+                playlists={this.state.playlists}
+                selectedPlaylistID={this.state.selectedPlaylistID}
+                setSelectedPlaylist={this.setSelectedPlaylist}
+              />
+            </div>
+
+            <div 
+              id="songs_container"
+              className={this.state.selectedSongID?'retracted':'expanded'}
+            >
+              <PlaylistPanel
+                contentType='SONGS'
+                songs={this.state.selectedPlaylistsSongs}
+                selectedSongID={this.state.selectedSongID}
+                setSelectedSong={this.setSelectedSong}
+              />
+            </div>
+
+            <div id="tagging_container">
+              {/**
+               * @todo create tagging component
+               */}
+            </div>
+
+          </div>
         </div>
-        <div id="page_container">
-          <button onClick={() => this.logIn()}>LOGIN</button>
+      )
+    } else {
+      return (
+        <div id="App">
+          <div id="navbar_container">
+            <Navbar/>
+          </div>
+          <div id="page_container">
+            <button onClick={() => this.logIn()}>LOGIN</button>
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
   }
 }
 
