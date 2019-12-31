@@ -41,3 +41,16 @@
   width: 80%;
   transition: width .3s;
 }
+
+#App #tagging_container {
+  height: 100%;
+}
+
+#App #tagging_container.hidden {
+  width: 0%;
+}
+
+#App #tagging_container.showing {
+  width: 55%;
+  transition: width .3s;
+}

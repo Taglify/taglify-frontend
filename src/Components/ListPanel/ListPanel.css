@@ -18,7 +18,7 @@
     color: #5B5B60;
     text-align: left;
     position: sticky;
-    top:0;
+    top: 0;
     background-color: #0c0c0d;
     justify-content: center;
     border-bottom: 1px solid#2a2a2e;
@@ -30,7 +30,7 @@
     list-style-type: none;
     margin-left: 0;
     margin-right: 0;
-    margin-bottom: 5px;
+    margin-bottom: 0;
     margin-top: 0;
     padding: 0;
     display: flex;
@@ -56,13 +56,10 @@
 }
 
 #ListPanel #Items .selected {
-    background-color: #1DB954;
+    color: #1DB954;
     opacity: 1;
 }
 
-#ListPanel #Items .playlist:hover {
-    background-color: #5B5B60;
-}
-#ListPanel #Items .selected:hover {
-    background-color: #1DB954;
+#ListPanel #Items .item:hover {
+    background-color: #2a2a2e;
 }

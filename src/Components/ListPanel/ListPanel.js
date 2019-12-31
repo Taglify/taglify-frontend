@@ -1,7 +1,7 @@
 /**
  * <ListPanel/> allows the user to select a playlist from their library to pick songs from.
  * 
- * @prop {string}   contentType         decides what tpye of list items should be rendered
+ * @prop {string}   contentType         decides what type of list items should be rendered
  * 
  * // If content type is PLAYLISTS
  * @prop {array}    playlists           the users playlists
@@ -46,8 +46,8 @@ class ListPanel extends Component {
     } else if (this.props.contentType === 'SONGS') {
         const songs = this.props.songs.map(song  =>
             <li 
-                className={this.props.selectedSongID===song.track.id?'selected item':'item'}
-                onClick={() => this.props.setSelectedSong(song.track.id)}
+                className={this.props.selectedSong.id===song.track.id?'selected item':'item'}
+                onClick={() => this.props.setSelectedSong(song.track)}
             >
                 {song.track.name}
             </li>

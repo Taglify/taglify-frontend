@@ -8,7 +8,8 @@ import './App.css';
 import SpotifyWebAPI from 'spotify-web-api-js';
 
 import Navbar        from './Components/Navbar/Navbar.js';
-import PlaylistPanel from './Components/ListPanel/ListPanel.js';
+import ListPanel from './Components/ListPanel/ListPanel.js';
+import TaggingPanel from './Components/TaggingPanel/TaggingPanel';
 
 
 // Global variables for Spotify API
@@ -38,7 +39,7 @@ class App extends React.Component {
       selectedPlaylistsSongs: [],         // the currently selected playlist's songs
       
       selectedPlaylistID: "",             // the current playlist id selected in PLAYLISTS <ListPanel/>
-      selectedSongID: "",                 // the current song id selected in SONGS <ListPanel/>
+      selectedSong: "",                 // the current song id selected in SONGS <ListPanel/>
 
       currentPage: "untaggedSongs"        // indicates the page the user is currently on
     }
@@ -164,7 +165,7 @@ class App extends React.Component {
 
     this.setState({
          selectedPlaylistID: playlist,
-         selectedSongID: '',
+         selectedSong: '',
     });
 
     // Store the contents of the playlist to this.state
@@ -180,10 +181,10 @@ class App extends React.Component {
      * Selects a song contained within <Panel/> with type SONGS and updates
      * the currently selected song in this.state.
      * 
-     * @param {string} song the playlist to update.
+     * @param {object} song the selected song from <ListPanel/>
      */
 
-    this.setState({selectedSongID: song});
+    this.setState({selectedSong: song});
 
   }
 
@@ -204,7 +205,7 @@ class App extends React.Component {
           <div id="page_container">
             
             <div id="playlists_container">
-              <PlaylistPanel
+              <ListPanel
                 contentType='PLAYLISTS'
                 playlists={this.state.playlists}
                 selectedPlaylistID={this.state.selectedPlaylistID}
@@ -214,20 +215,22 @@ class App extends React.Component {
 
             <div 
               id="songs_container"
-              className={this.state.selectedSongID?'retracted':'expanded'}
+              className={this.state.selectedSong?'retracted':'expanded'}
             >
-              <PlaylistPanel
+              <ListPanel
                 contentType='SONGS'
                 songs={this.state.selectedPlaylistsSongs}
-                selectedSongID={this.state.selectedSongID}
+                selectedSong={this.state.selectedSong}
                 setSelectedSong={this.setSelectedSong}
               />
             </div>
 
-            <div id="tagging_container">
-              {/**
-               * @todo create tagging component
-               */}
+            <div id="tagging_container"
+              className={this.state.selectedSong?'showing':'hidden'}
+            >
+              <TaggingPanel
+                selectedSong={this.state.selectedSong}
+              />
             </div>
 
           </div>

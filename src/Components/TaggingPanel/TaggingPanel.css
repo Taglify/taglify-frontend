@@ -1,0 +1,40 @@
+#TaggingPanel {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    overflow-x: hidden;
+}
+
+#TaggingPanel #Title {
+    margin-bottom: 0;
+    padding-top:  .4em;
+    padding-left: .6em;
+
+
+    width: 100%;
+    height: 40px;
+    
+    font-size: 1.4em;
+    color: #5B5B60;
+    text-align: left;
+    position: sticky;
+    top: 0;
+    background-color: #0c0c0d;
+    justify-content: center;
+    border-bottom: 1px solid#2a2a2e;
+    border-left: 1px solid#2a2a2e;
+
+    z-index: 2;
+}
+
+#TaggingPanel #SongInfo {
+    width: 70%;
+    height: 200px;
+    background-color: #0c0c0d;
+    margin-top: 40px;
+    border-radius: 5px;
+    border: 1px solid #2a2a2e;
+}
